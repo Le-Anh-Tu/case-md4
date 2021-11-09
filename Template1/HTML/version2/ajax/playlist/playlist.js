@@ -17,7 +17,7 @@ function getPlaylist(result, i) {
             <div class="ms_rcnt_box_text">
                 <h3>
                     <button type="button" style="border: none; border-radius: 10px" class="btn-outline-primary"
-                            onclick="showAllMusicByCategory(${result[i].id})">${result[i].name}</button>
+                            onclick="getAllPlayListMusic(${result[i].id})">${result[i].name}</button>
                 </h3>
             </div>
         </div>
@@ -34,48 +34,57 @@ function getPlaylist(result, i) {
             for (let i = 0; i < result.length; i++) {
                 content += getPlaylist(result, i)
             }
-            $("show-playlist").html(content);
+            $("#playlist").html(content);
         }
     })
     }
-
-    function getMusicByPlaylist(i, result){
-    return `<div class="col-lg-4 col-md-12 padding_right40">
+function getAllPlayListMusic(id) {
+    $.ajax({
+        url:URL_BASE + 'playlists/'+id,
+        type:'GET',
+        success:function (data) {
+            let ct = ''
+            for (let i = 0; i < data.music.length; i++) {
+                ct += getMusicByPlaylist(data.music[i])
+            }
+            $("#playlist").html(ct)
+        }
+    })
+}
+    function getMusicByPlaylist(result){
+    return `
                         <div class="ms_weekly_box">
                             <div class="weekly_left">
                                     <span class="w_top_no">
-                                     ${i + 1}
+                                    
                                     </span>
                                 <div class="w_top_song">
                                     <div class="w_tp_song_img">
-                                        <img src="images/${result[i].image}" alt="" class="img-fluid">
+                                        <img src="http://localhost:8080/images/${result.image}" alt="" class="img-fluid">
                                         <div class="ms_song_overlay">
                                         </div>
                                         <div class="ms_play_icon">
-                                            <img onclick="playMusic(${result[i].id})" src="\\Users\\leanh\\huongculin" alt="">
+                                            <img onclick="playMusic(${result.id})" src="http://localhost:8080/${result.image}" alt="">
                                         </div>
                                     </div>
                                     <div class="w_tp_song_name">
-                                        <h3><a href="#">${result[i].name}</a></h3>
-                                        <p>${result[i].user?.fullName}</p>
+                                        <h3><a href="#">${result.name}</a></h3>
+                                        <p>${result.user?.fullName}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="weekly_right">
                                 <span class="w_song_time"></span>
                                 <span class="ms_more_icon" data-other="1">
-                                <img src="images/svg/more1.svg" alt="">
+                                <img src="http://localhost:8080/${result.image}" alt="">
                                 </span>
                             </div>
                             <ul class="more_option">
-                                    <li><a href="#"><span class="opt_icon"><span class="icon icon_fav"></span></span>Add To Favourites</a></li>
-                                <li><a href="#"><span class="opt_icon"><span class="icon icon_queue"></span></span>Add To Queue</a></li>
-                                <li><a href="#"><span class="opt_icon"><span class="icon icon_dwn"></span></span>Download Now</a></li>
+                                    <li><a href="#" onclick="addNewFavorite(${result.id})"><span class="opt_icon"><span class="icon icon_fav"></span></span>Add To Favourites</a></li>
                                 <li><a href="#"><span class="opt_icon"><span class="icon icon_playlst"></span></span>Add To Playlist</a></li>
-                                <li><a href="#"><span class="opt_icon"><span class="icon icon_share"></span></span>Share</a></li>
                             </ul>
                         </div>
-                    </div>`;
+                    `;
     }
 function getContentHeading(message) {
     return `<div class="col-lg-12">
@@ -194,7 +203,7 @@ function playMusic(id) {
                                                 <div class="knob d3"><span></span></div>
                                                 <div class="handle"></div>
                                                 <div class="round">
-                                                    <img src="images/svg/volume.svg" alt="">
+                                                    <img src="http://localhost:8080/${result[i].image}" alt="">
                                                 </div>
                                             </div>
                                         </div>
@@ -224,4 +233,41 @@ function playMusic(id) {
             $("#play-music").html(content);
         }
     })
+}
+function getSong(song) {
+    return `<div class="ms_weekly_box">
+                            <div class="weekly_left">
+                                    <span class="w_top_no">
+
+                                </span>
+                                <div class="w_top_song">
+                                    <div class="w_tp_song_img">
+                                        <img src="http://localhost:8080/${result[i].image}" alt="">
+                                        <div class="ms_song_overlay">
+                                        </div>
+                                        <div class="ms_play_icon">
+                                            <img src="http://localhost:8080/${result[i].image}" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="w_tp_song_name">
+                                        <h3><a href="#">Until I Met You</a></h3>
+                                        <p>Ava Cornish</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="weekly_right">
+                                <span class="w_song_time">5:10</span>
+                                <span class="ms_more_icon" data-other="1">
+                                <img src="http://localhost:8080/${result[i].image}" alt="">
+                                </span>
+                            </div>
+                            <ul class="more_option">
+                                <li><a href="#"><span class="opt_icon"><span class="icon icon_fav"></span></span>Add To Favourites</a></li>
+                                <li><a href="#"><span class="opt_icon"><span class="icon icon_queue"></span></span>Add To Queue</a></li>
+                                <li><a href="#"><span class="opt_icon"><span class="icon icon_dwn"></span></span>Download Now</a></li>
+                                <li><a href="#"><span class="opt_icon"><span class="icon icon_playlst"></span></span>Add To Playlist</a></li>
+                                <li><a href="#"><span class="opt_icon"><span class="icon icon_share"></span></span>Share</a></li>
+                            </ul>
+                        </div>
+                        <div class="ms_divider"></div>`
 }
